@@ -9,7 +9,7 @@ import { arraify, lookupFile } from "./utils"
 export function loadEnv(
   mode: string,
   envDir: string,
-  prefixes: string | string[] = "haya_",
+  prefixes: string | string[] = "HAYA_",
 ): Record<string, string> {
   if (mode === "local") {
     throw new Error(
@@ -26,7 +26,7 @@ export function loadEnv(
     /** default file */ `.env`,
   ]
 
-  // check if there are actual env variables starting with haya_*
+  // check if there are actual env variables starting with HAYA_*
   // these are typically provided inline and should be prioritized
   for (const key in process.env) {
     if (
@@ -60,7 +60,7 @@ export function loadEnv(
           env[key] = value
         } else if (key === "NODE_ENV") {
           // NODE_ENV override in .env file
-          process.env.haya_USER_NODE_ENV = value
+          process.env.HAYA_USER_NODE_ENV = value
         }
       }
     }

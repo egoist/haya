@@ -114,14 +114,14 @@ haya uses [dotenv](https://github.com/motdotla/dotenv) to load additional enviro
 
 Loaded env variables are also exposed to your client source code via `process.env`.
 
-To prevent accidentally leaking env variables to the client, only variables prefixed with `haya_` are exposed to your haya-processed code. e.g. the following file:
+To prevent accidentally leaking env variables to the client, only variables prefixed with `HAYA_` are exposed to your haya-processed code. e.g. the following file:
 
 ```
 DB_PASSWORD=foobar
-haya_SOME_KEY=123
+HAYA_SOME_KEY=123
 ```
 
-Only `haya_SOME_KEY` will be exposed as `process.env.haya_SOME_KEY` to your client source code, but `DB_PASSWORD` will not.
+Only `HAYA_SOME_KEY` will be exposed as `process.env.HAYA_SOME_KEY` to your client source code, but `DB_PASSWORD` will not.
 
 ### The `public` directory
 
