@@ -43,10 +43,20 @@ export const cssPlugin = (extraCssFiles: Set<string>): Plugin => {
           throw new Error(`You need to install "postcss" locally`)
         }
 
-        const result = await postcss
-          .default(config.plugins)
-          .process(code, { ...config.options })
-        return result.css
+        const result = await postcss.default(config.plugins).process(code, {
+          ...config.options,
+          map: !!build.initialOptions.sourcemap,
+        })
+
+        code = result.css
+        if (result.map) {
+          // inline sourcemap
+          code += `\n/*# sourceMappingURL=data:application/json;base64,${Buffer.from(
+            result.map.toString(),
+          ).toString("base64")} */`
+        }
+
+        return code
       }
 
       build.onLoad({ filter: /\.css$/ }, async (args) => {
@@ -55,6 +65,7 @@ export const cssPlugin = (extraCssFiles: Set<string>): Plugin => {
           // Just load it as css
           let contents = await fs.promises.readFile(args.path, "utf8")
           contents = await transform(contents, args.path)
+
           return {
             loader: "css",
             contents,
