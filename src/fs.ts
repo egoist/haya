@@ -8,6 +8,7 @@ export const outputFileSync = (filepath: string, data: any) => {
 }
 
 export const copyFolderSync = (src: string, dest: string) => {
+  if (!fs.existsSync(src)) return
   const files = fs.readdirSync(src)
   files.forEach((file) => {
     const srcFile = path.join(src, file)

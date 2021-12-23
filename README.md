@@ -18,6 +18,23 @@ This guide is heaviliy copied from [Vite](https://vitejs.dev), since their usage
 npm i haya -D
 ```
 
+## Quick Start
+
+Use [aho](https://github.com/egoist/aho) to download the starter project:
+
+```bash
+npx aho egoist/haya/template my-app
+cd my-app
+npm i
+
+# start dev server
+npm run dev
+# build for production
+npm run build
+# preview production build
+npm run preview
+```
+
 ## Basics
 
 ### Commands
