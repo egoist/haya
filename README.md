@@ -10,7 +10,13 @@
 
 This is a dev server and a bundler based on [esbuild](https://esbuild.github.io). Very early stage, don't use it for serious projects.
 
-This guide is heaviliy copied from [Vite](https://vitejs.dev), since their usages are very similar.
+This guide is heavily copied from [Vite](https://vitejs.dev), since their usages are very similar.
+
+## Main Differences from Vite
+
+- Haya always bundles your app, while Vite does not during development.
+- Haya use esbuild for bundling, Vite uses Rollup.
+- Haya only supports full page reloading, while Vite has fine-grained HMR support.
 
 ## Install
 
