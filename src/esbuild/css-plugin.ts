@@ -24,7 +24,7 @@ const resolvePostcssConfig = async (
   }
 }
 
-export const cssPlugin = (): Plugin => {
+export const cssPlugin = (extraCssFiles: Set<string>): Plugin => {
   return {
     name: "css",
 
@@ -67,10 +67,10 @@ export const cssPlugin = (): Plugin => {
           outdir: build.initialOptions.outdir!,
           entryPoints: [args.path],
           absWorkingDir: build.initialOptions.absWorkingDir,
-          write: false,
-          sourcemap: build.initialOptions.sourcemap ? "inline" : false,
+          sourcemap: build.initialOptions.sourcemap,
           minify: build.initialOptions.minify,
           logLevel: build.initialOptions.logLevel,
+          metafile: true,
           plugins: [
             {
               name: "import-css",
@@ -93,9 +93,23 @@ export const cssPlugin = (): Plugin => {
             warnings: result.warnings,
           }
         }
+        const file = Object.keys(result.metafile!.outputs).find((file) =>
+          file.endsWith(".css"),
+        )
+        if (!file) {
+          throw new Error(`No CSS file generated`)
+        }
+        const filepath = path.join(dir, file)
+        const url =
+          build.initialOptions.publicPath +
+          path.relative(build.initialOptions.outdir!, filepath)
+
+        if (args.suffix !== "?import-only") {
+          extraCssFiles.add(filepath)
+        }
+
         return {
-          contents: result.outputFiles[0].contents,
-          loader: "file",
+          contents: `export default ${JSON.stringify(url)}`,
         }
       })
     },

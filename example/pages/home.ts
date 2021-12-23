@@ -1,9 +1,6 @@
-import style from "./home.css"
+import style from "./home.css?import-only"
 import { defineComponent, h } from "vue"
-import { insertStyleLink } from "../utils"
-
-insertStyleLink(style)
-
+console.log(style)
 export default defineComponent({
   setup() {
     return () =>

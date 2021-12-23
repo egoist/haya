@@ -1,7 +1,7 @@
 import http from "http"
 import path from "upath"
 import fs from "fs"
-import esbuild, { Metafile, formatMessages } from "esbuild"
+import esbuild, { formatMessages, BuildResult } from "esbuild"
 import { createApp } from "h3"
 import posthtml from "posthtml"
 import sirv from "sirv"
@@ -14,8 +14,6 @@ import { isExternalLink } from "./utils"
 import { cssPlugin } from "./esbuild/css-plugin"
 
 const slash = (input: string) => input.replace(/\\/g, "/")
-
-type BuildResult = { html: string }
 
 const handleError = async (error: any) => {
   process.exitCode = 1
@@ -39,13 +37,15 @@ const handleError = async (error: any) => {
   }
 }
 
+type BuildEndArgs = { html: string }
+
 const _build = async ({
   options,
   buildEnd,
   reload,
 }: {
   options: NormalizedOptions
-  buildEnd: (result: BuildResult) => void
+  buildEnd: (args: BuildEndArgs) => void
   reload?: () => void
 }) => {
   const htmlPath = path.join(options.dir, "index.html")
@@ -54,6 +54,7 @@ const _build = async ({
   let htmlTemplate = ""
   let entry: Record<string, string> = {}
   const publicPath = "/"
+  let result: Awaited<ReturnType<typeof startBuild>> | undefined
 
   const setHtmlTemplate = async () => {
     if (!fs.existsSync(htmlPath)) {
@@ -102,7 +103,9 @@ const _build = async ({
       .then((res) => res.html)
   }
 
-  const handleBuildEnd = (metafile: Metafile) => {
+  const handleBuildEnd = () => {
+    if (!result) return
+    const { metafile, extraCssFiles } = result
     const entryOutputFiles: string[] = Object.values(entry).map((entryFile) => {
       for (const relativePath in metafile.outputs) {
         const file = metafile.outputs[relativePath]
@@ -129,6 +132,16 @@ const _build = async ({
         return publicPath + entryOutputFiles[index]
       })
       .replace(
+        "</head>",
+        `${[...extraCssFiles]
+          .map((file) => {
+            return `<link href="${
+              publicPath + path.relative(options.outDir, file)
+            }" rel="stylesheet">`
+          })
+          .join("\n")}</head>`,
+      )
+      .replace(
         "</body>",
         options.dev
           ? `<script>
@@ -149,6 +162,7 @@ const _build = async ({
   }
 
   const startBuild = async () => {
+    const extraCssFiles: Set<string> = new Set()
     await setHtmlTemplate()
     const result = await esbuild.build({
       absWorkingDir: options.dir,
@@ -205,6 +219,7 @@ const _build = async ({
             let end: TimeEndFunction | undefined
             build.onStart(async () => {
               end = timeSpan()
+              extraCssFiles.clear()
               removeFolderSync(options.outDir)
             })
             build.onEnd(() => {
@@ -214,22 +229,29 @@ const _build = async ({
             })
           },
         },
-        cssPlugin(),
+        cssPlugin(extraCssFiles),
       ],
     })
 
-    return {
-      htmlTemplate,
-      metafile: result.metafile!,
-      rebuild: () => result.rebuild!(),
-      dispose: () => result.rebuild!.dispose(),
+    const handle = (result: BuildResult) => {
+      return {
+        htmlTemplate,
+        metafile: result.metafile!,
+        extraCssFiles,
+        rebuild: async () => {
+          const rebuildResult = await result.rebuild!()
+          return handle(rebuildResult)
+        },
+        dispose: () => result.rebuild!.dispose(),
+      }
     }
+
+    return handle(result)
   }
 
-  let result: Awaited<ReturnType<typeof startBuild>>
   try {
     result = await startBuild()
-    handleBuildEnd(result.metafile)
+    handleBuildEnd()
   } catch (error) {
     await handleError(error)
   }
@@ -242,12 +264,13 @@ const _build = async ({
         ignoreInitial: true,
       })
       .on("all", async (event, filepath) => {
+        if (!result) return
         filepath = slash(filepath)
         if (htmlPath === filepath) {
           result.dispose()
           try {
             result = await startBuild()
-            handleBuildEnd(result.metafile)
+            handleBuildEnd()
           } catch (error) {
             handleError(error)
           }
@@ -262,8 +285,8 @@ const _build = async ({
           deps.some((dep) => path.join(options.dir, dep) === filepath)
         ) {
           try {
-            const rebuildResult = await result.rebuild()
-            handleBuildEnd(rebuildResult.metafile!)
+            result = await result.rebuild()
+            handleBuildEnd()
           } catch (error) {
             await handleError(error)
           }

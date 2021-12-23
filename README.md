@@ -60,16 +60,7 @@ JSX/TSX works out of the box.
 
 ### CSS
 
-CSS is treated specially in haya compared to other bundlers, if you import a CSS file in your JavaScript file, you will get the URL to the output CSS file:
-
-```js
-import style from "./style.css"
-
-console.log(style)
-//=> /style-[hash].css
-```
-
-If you want it to be embedded to HTML, use `<link>` in `index.html` instead:
+The recommended way to use CSS is to use `<link>` in `index.html`:
 
 ```html
 <link rel="stylesheet" href="/src/style.css" />
@@ -79,6 +70,32 @@ The generated `index.html` will look like:
 
 ```html
 <link rel="stylesheet" href="/0-style-[hash].css" />
+```
+
+However you can also directly `import` CSS files in TypeScript/JavaScript files:
+
+````js
+CSS is treated specially in haya compared to other bundlers, if you import a CSS file in your JavaScript file, you will get the URL to the output CSS file:
+
+```js
+import "./style.css"
+````
+
+It will also be included in generated `index.html`.
+
+Note that the exported value of CSS files will be the its URL:
+
+```js
+import style from "./style.css"
+
+console.log(style)
+//=> /style-[hash].css
+```
+
+If you want to get the URL without adding the CSS file to generated `index.html`, append `?import-only` query to the module name:
+
+```js
+import style from "./style.css?import-only"
 ```
 
 ### PostCSS
