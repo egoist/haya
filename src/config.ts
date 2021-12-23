@@ -9,7 +9,7 @@ import { arraify, lookupFile } from "./utils"
 export function loadEnv(
   mode: string,
   envDir: string,
-  prefixes: string | string[] = "VEI_",
+  prefixes: string | string[] = "haya_",
 ): Record<string, string> {
   if (mode === "local") {
     throw new Error(
@@ -26,7 +26,7 @@ export function loadEnv(
     /** default file */ `.env`,
   ]
 
-  // check if there are actual env variables starting with VEI_*
+  // check if there are actual env variables starting with haya_*
   // these are typically provided inline and should be prioritized
   for (const key in process.env) {
     if (
@@ -60,7 +60,7 @@ export function loadEnv(
           env[key] = value
         } else if (key === "NODE_ENV") {
           // NODE_ENV override in .env file
-          process.env.VEI_USER_NODE_ENV = value
+          process.env.haya_USER_NODE_ENV = value
         }
       }
     }
@@ -86,7 +86,7 @@ export const loadConfig = async (
 }> => {
   const configPath = lookupFile(
     dir,
-    ["vei.config.ts", "vei.config.mjs", "vei.config.js", "vei.config.cjs"],
+    ["haya.config.ts", "haya.config.mjs", "haya.config.js", "haya.config.cjs"],
     true,
   )
   let userConfig: UserConfig = {}
@@ -94,7 +94,7 @@ export const loadConfig = async (
   if (configPath) {
     const { mod, dependencies: _deps } = await bundleRequire({
       filepath: configPath,
-      external: ["vei"],
+      external: ["haya"],
     })
     userConfig = mod.default || {}
     dependencies = _deps

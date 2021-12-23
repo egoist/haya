@@ -1,5 +1,5 @@
 {
-  "name": "vei",
+  "name": "haya",
   "version": "0.0.0",
   "description": "esbuild based dev server and production bundler",
   "sideEffects": false,
@@ -22,7 +22,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/egoist/vei"
+    "url": "https://github.com/egoist/haya"
   },
   "keywords": [
     "esbuild",

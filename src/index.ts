@@ -53,7 +53,7 @@ const _build = async ({
               const index = Object.keys(entry).length
               const [, name] = /\/([^\.]+)\.\w+$/.exec(node.attrs.src) || []
               entry[`${index}-${name}`] = path.join(options.dir, node.attrs.src)
-              node.attrs.src = `__VEI_SCRIPT_SRC_${index}__`
+              node.attrs.src = `__haya_SCRIPT_SRC_${index}__`
             }
           }
           if (
@@ -68,7 +68,7 @@ const _build = async ({
               const [, name] = /\/([^\.]+)\.\w+$/.exec(node.attrs.href) || []
               entry[`${index}-${name}`] =
                 path.join(options.dir, node.attrs.href) + "?css"
-              node.attrs.href = `__VEI_STYLE_HREF_${index}__`
+              node.attrs.href = `__haya_STYLE_HREF_${index}__`
             }
           }
           return node
@@ -99,10 +99,10 @@ const _build = async ({
     deps = Object.keys(metafile.inputs).map((v) => v.replace(/\?.*$/, ""))
 
     const html = htmlTemplate
-      .replace(/__VEI_SCRIPT_SRC_(\d+)__/g, (_, index) => {
+      .replace(/__haya_SCRIPT_SRC_(\d+)__/g, (_, index) => {
         return publicPath + entryOutputFiles[index]
       })
-      .replace(/__VEI_STYLE_HREF_(\d+)__/g, (_, index) => {
+      .replace(/__haya_STYLE_HREF_(\d+)__/g, (_, index) => {
         return publicPath + entryOutputFiles[index]
       })
       .replace(

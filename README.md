@@ -2,9 +2,9 @@
 
 ---
 
-# vei
+# haya
 
-[![npm version](https://badgen.net/npm/v/vei)](https://npm.im/vei) [![npm downloads](https://badgen.net/npm/dm/vei)](https://npm.im/vei)
+[![npm version](https://badgen.net/npm/v/haya)](https://npm.im/haya) [![npm downloads](https://badgen.net/npm/dm/haya)](https://npm.im/haya)
 
 ## Introduction
 
@@ -15,20 +15,20 @@ This guide is heaviliy copied from [Vite](https://vitejs.dev), since their usage
 ## Install
 
 ```bash
-npm i vei -D
+npm i haya -D
 ```
 
 ## Basics
 
 ### Commands
 
-- `vei [dir]`: Start dev server, treat `dir` as root directory, defaults to `.`
-- `vei build [dir]`: Build for production, output files go to `[dir]/dist`
-- `vei preview [dir]`: Preview the production build in `[dir]/dist`.
+- `haya [dir]`: Start dev server, treat `dir` as root directory, defaults to `.`
+- `haya build [dir]`: Build for production, output files go to `[dir]/dist`
+- `haya preview [dir]`: Preview the production build in `[dir]/dist`.
 
 ### Root HTML
 
-Vei expects a `index.html` file in the root directory. You can use `<link>` and `<script>` tags to reference and bundle external CSS and JavaScript/TypeScript.
+haya expects a `index.html` file in the root directory. You can use `<link>` and `<script>` tags to reference and bundle external CSS and JavaScript/TypeScript.
 
 - `<link>` should have property `rel="stylesheet"` and `href="/some/style.css"`
 - `<script>` should have property `type="module"` and `src="/some/script.ts"`
@@ -37,13 +37,13 @@ Vei expects a `index.html` file in the root directory. You can use `<link>` and 
 
 ### TypeScript / JavaScript
 
-Vei uses [esbuild](https://esbuild.github.io) to bundle your TypeScript and JavaScript files in ES Module format, with code splitting enabled (via dynamic import).
+haya uses [esbuild](https://esbuild.github.io) to bundle your TypeScript and JavaScript files in ES Module format, with code splitting enabled (via dynamic import).
 
 JSX/TSX works out of the box.
 
 ### CSS
 
-CSS is treated specially in Vei compared to other bundlers, if you import a CSS file in your JavaScript file, you will get the URL to the output CSS file:
+CSS is treated specially in haya compared to other bundlers, if you import a CSS file in your JavaScript file, you will get the URL to the output CSS file:
 
 ```js
 import style from "./style.css"
@@ -97,13 +97,13 @@ Now `~/main` will be resolved to `./src/main`.
 
 ### Env Variables
 
-Vei exposes env variables on the `process.env` object. Some built-in variables are available in all cases:
+haya exposes env variables on the `process.env` object. Some built-in variables are available in all cases:
 
 - `process.env.NODE_ENV`: `development` in dev or `production` in production. We also have a special global variable `__DEV__` which evaluates to `true` in dev and `false` in production.
 
 #### `.env` Files
 
-Vei uses [dotenv](https://github.com/motdotla/dotenv) to load additional environment variables from the following files in root directory:
+haya uses [dotenv](https://github.com/motdotla/dotenv) to load additional environment variables from the following files in root directory:
 
 ```
 .env                # loaded in all cases
@@ -114,14 +114,14 @@ Vei uses [dotenv](https://github.com/motdotla/dotenv) to load additional environ
 
 Loaded env variables are also exposed to your client source code via `process.env`.
 
-To prevent accidentally leaking env variables to the client, only variables prefixed with `VEI_` are exposed to your Vei-processed code. e.g. the following file:
+To prevent accidentally leaking env variables to the client, only variables prefixed with `haya_` are exposed to your haya-processed code. e.g. the following file:
 
 ```
 DB_PASSWORD=foobar
-VEI_SOME_KEY=123
+haya_SOME_KEY=123
 ```
 
-Only `VEI_SOME_KEY` will be exposed as `process.env.VEI_SOME_KEY` to your client source code, but `DB_PASSWORD` will not.
+Only `haya_SOME_KEY` will be exposed as `process.env.haya_SOME_KEY` to your client source code, but `DB_PASSWORD` will not.
 
 ### The `public` directory
 
@@ -141,14 +141,14 @@ Note that:
 
 ### Deploying a Static Site
 
-The output directory `dist` can be served as a static website, you can preview it locally using the `vei preview` command.
+The output directory `dist` can be served as a static website, you can preview it locally using the `haya preview` command.
 
 ## Roadmap
 
 - [ ] PostCSS / Tailwind support.
 - [ ] Vue / Svelte support.
 - [ ] SSR support, like the `ssrLoadModule` API from Vite.
-- [ ] Testing framework, like [Vitest](https://vitest.dev/) but for Vei.
+- [ ] Testing framework, like [Vitest](https://vitest.dev/) but for haya.
 
 ## Sponsors
 

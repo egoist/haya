@@ -2,7 +2,7 @@
 import { cac } from "cac"
 import { version } from "../package.json"
 
-const cli = cac("vei")
+const cli = cac("haya")
 
 cli
   .command("[dir]", "Start dev server")

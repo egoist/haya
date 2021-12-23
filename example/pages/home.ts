@@ -9,7 +9,7 @@ export default defineComponent({
     return () =>
       h("div", [
         h("h1", "Hello World"),
-        h("ul", [h("li", `env from .env: ${process.env.VEI_FROM_DOT_ENV}`)]),
+        h("ul", [h("li", `env from .env: ${process.env.haya_FROM_DOT_ENV}`)]),
       ])
   },
 })
