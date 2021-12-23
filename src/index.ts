@@ -1,7 +1,7 @@
 import http from "http"
 import path from "upath"
 import fs from "fs"
-import esbuild, { Metafile } from "esbuild"
+import esbuild, { Metafile, formatMessages } from "esbuild"
 import { createApp } from "h3"
 import posthtml from "posthtml"
 import sirv from "sirv"
@@ -11,10 +11,33 @@ import timeSpan, { TimeEndFunction } from "time-span"
 import { copyFolderSync, outputFileSync, removeFolderSync } from "./fs"
 import { loadConfig, loadEnv, UserConfig } from "./config"
 import { isExternalLink } from "./utils"
+import { cssPlugin } from "./esbuild/css-plugin"
 
 const slash = (input: string) => input.replace(/\\/g, "/")
 
 type BuildResult = { html: string }
+
+const handleError = async (error: any) => {
+  process.exitCode = 1
+  if (error.errors || error.warnings) {
+    if (error.errors) {
+      const messages = await formatMessages(error.errors, {
+        kind: "error",
+        color: true,
+      })
+      messages.forEach((msg) => console.error(msg))
+    }
+    if (error.warnings) {
+      const messages = await formatMessages(error.warnings, {
+        kind: "warning",
+        color: true,
+      })
+      messages.forEach((msg) => console.error(msg))
+    }
+  } else {
+    console.error(error.stack)
+  }
+}
 
 const _build = async ({
   options,
@@ -144,6 +167,7 @@ const _build = async ({
       entryNames: options.dev ? "[name]" : "[name]-[hash]",
       minify: !options.dev,
       legalComments: "none",
+      logLevel: "silent",
       loader: {
         ".aac": "file",
         ".eot": "file",
@@ -190,34 +214,7 @@ const _build = async ({
             })
           },
         },
-        {
-          name: "css",
-          setup(build) {
-            build.onLoad({ filter: /\.css$/ }, async (args) => {
-              if (args.suffix === "?css") {
-                // For link stylesheet in HTML file
-                // Just load it as css
-                return {
-                  loader: "css",
-                  contents: await fs.promises.readFile(args.path, "utf8"),
-                }
-              }
-              const result = await esbuild.build({
-                format: "esm",
-                bundle: true,
-                outdir: options.outDir,
-                entryPoints: [args.path],
-                write: false,
-                sourcemap: options.dev && "inline",
-                minify: build.initialOptions.minify,
-              })
-              return {
-                contents: result.outputFiles[0].contents,
-                loader: "file",
-              }
-            })
-          },
-        },
+        cssPlugin(),
       ],
     })
 
@@ -229,8 +226,13 @@ const _build = async ({
     }
   }
 
-  let result = await startBuild()
-  handleBuildEnd(result.metafile)
+  let result: Awaited<ReturnType<typeof startBuild>>
+  try {
+    result = await startBuild()
+    handleBuildEnd(result.metafile)
+  } catch (error) {
+    await handleError(error)
+  }
 
   if (options.dev) {
     chokidar
@@ -243,8 +245,12 @@ const _build = async ({
         filepath = slash(filepath)
         if (htmlPath === filepath) {
           result.dispose()
-          result = await startBuild()
-          handleBuildEnd(result.metafile)
+          try {
+            result = await startBuild()
+            handleBuildEnd(result.metafile)
+          } catch (error) {
+            handleError(error)
+          }
         } else if (filepath.startsWith(options.publicFolder)) {
           if (
             reload &&
@@ -255,8 +261,12 @@ const _build = async ({
         } else if (
           deps.some((dep) => path.join(options.dir, dep) === filepath)
         ) {
-          const rebuildResult = await result.rebuild()
-          handleBuildEnd(rebuildResult.metafile!)
+          try {
+            const rebuildResult = await result.rebuild()
+            handleBuildEnd(rebuildResult.metafile!)
+          } catch (error) {
+            await handleError(error)
+          }
         }
       })
   }

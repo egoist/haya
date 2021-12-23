@@ -1,5 +1,6 @@
 import path from "upath"
 import fs from "fs"
+import resolveFrom from "resolve-from"
 
 export function arraify<T>(target: T | T[]): T[] {
   return Array.isArray(target) ? target : [target]
@@ -24,4 +25,13 @@ export function lookupFile(
 
 export const isExternalLink = (input: string) => {
   return /^(\/\/|https?:\/\/)/.test(input)
+}
+
+export const localImport = async <T>(
+  id: string,
+  dir = path.resolve(),
+): Promise<T> => {
+  const resolved = resolveFrom.silent(dir, id)
+
+  return resolved && (await import(id))
 }

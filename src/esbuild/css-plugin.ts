@@ -1,0 +1,103 @@
+import path from "upath"
+import fs from "fs"
+import esbuild, { Plugin } from "esbuild"
+import { localImport } from "../utils"
+import type { Result as PostcssConfigResult } from "postcss-load-config"
+
+const postcssConfigCache = new Map<string, any>()
+
+const resolvePostcssConfig = async (
+  id: string,
+): Promise<PostcssConfigResult | null> => {
+  const dir = path.dirname(id)
+  if (postcssConfigCache.has(dir)) return postcssConfigCache.get(dir)!
+
+  const loadConfig = await import("postcss-load-config")
+  try {
+    const config = await loadConfig.default({ from: id, to: id, cwd: dir }, dir)
+    return config
+  } catch (error: any) {
+    if (!/No PostCSS Config found/.test(error.message)) {
+      throw error
+    }
+    return null
+  }
+}
+
+export const cssPlugin = (): Plugin => {
+  return {
+    name: "css",
+
+    async setup(build) {
+      let postcss: typeof import("postcss") | undefined
+      const dir = build.initialOptions.absWorkingDir!
+
+      const transform = async (code: string, id: string) => {
+        const config = await resolvePostcssConfig(id)
+        if (!config || config.plugins.length === 0) {
+          return code
+        }
+
+        postcss = postcss || (await localImport("postcss", dir))
+        if (!postcss) {
+          throw new Error(`You need to install "postcss" locally`)
+        }
+
+        const result = await postcss
+          .default(config.plugins)
+          .process(code, { ...config.options })
+        return result.css
+      }
+
+      build.onLoad({ filter: /\.css$/ }, async (args) => {
+        if (args.suffix === "?css") {
+          // For link stylesheet in HTML file
+          // Just load it as css
+          let contents = await fs.promises.readFile(args.path, "utf8")
+          contents = await transform(contents, args.path)
+          return {
+            loader: "css",
+            contents,
+          }
+        }
+
+        const result = await esbuild.build({
+          format: "esm",
+          bundle: true,
+          outdir: build.initialOptions.outdir!,
+          entryPoints: [args.path],
+          absWorkingDir: build.initialOptions.absWorkingDir,
+          write: false,
+          sourcemap: build.initialOptions.sourcemap ? "inline" : false,
+          minify: build.initialOptions.minify,
+          logLevel: build.initialOptions.logLevel,
+          plugins: [
+            {
+              name: "import-css",
+              setup(build) {
+                build.onLoad({ filter: /\.css$/ }, async (args) => {
+                  let contents = await fs.promises.readFile(args.path, "utf8")
+                  contents = await transform(contents, args.path)
+                  return {
+                    contents,
+                    loader: "css",
+                  }
+                })
+              },
+            },
+          ],
+        })
+        if (result.errors.length > 0 || result.warnings.length > 0) {
+          return {
+            errors: result.errors,
+            warnings: result.warnings,
+          }
+        }
+        return {
+          contents: result.outputFiles[0].contents,
+          loader: "file",
+        }
+      })
+    },
+  }
+}

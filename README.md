@@ -66,7 +66,7 @@ The generated `index.html` will look like:
 
 ### PostCSS
 
-SOON.
+Adding a `postcss.config.js` or `postcss.config.cjs` in your root directory to enable postcss.
 
 ### Vue / Svelte
 
@@ -145,7 +145,7 @@ The output directory `dist` can be served as a static website, you can preview i
 
 ## Roadmap
 
-- [ ] PostCSS / Tailwind support.
+- [x] PostCSS / Tailwind support.
 - [ ] Vue / Svelte support.
 - [ ] SSR support, like the `ssrLoadModule` API from Vite.
 - [ ] Testing framework, like [Vitest](https://vitest.dev/) but for haya.
