@@ -80,12 +80,9 @@ The generated `index.html` will look like:
 
 However you can also directly `import` CSS files in TypeScript/JavaScript files:
 
-````js
-CSS is treated specially in haya compared to other bundlers, if you import a CSS file in your JavaScript file, you will get the URL to the output CSS file:
-
 ```js
 import "./style.css"
-````
+```
 
 It will also be included in generated `index.html`.
 
