@@ -23,7 +23,7 @@ npm i haya -D
 Use [aho](https://github.com/egoist/aho) to download the starter project:
 
 ```bash
-npx aho egoist/haya/template my-app
+npx aho@latest egoist/haya/template my-app
 cd my-app
 npm i
 
