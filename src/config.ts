@@ -9,7 +9,7 @@ import { arraify, lookupFile } from "./utils"
 export function loadEnv(
   mode: string,
   envDir: string,
-  prefixes: string | string[] = "HAYA_",
+  prefixes: string | string[] = ["HAYA_", "VITE_"],
 ): Record<string, string> {
   if (mode === "local") {
     throw new Error(
