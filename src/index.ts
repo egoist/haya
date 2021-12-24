@@ -51,81 +51,31 @@ const _build = async ({
 }) => {
   const htmlPath = path.join(options.dir, "index.html")
 
-  let deps: string[] = []
-  let htmlTemplate = ""
-  let entry: Record<string, string> = {}
   const publicPath = "/"
   let result: Awaited<ReturnType<typeof startBuild>> | undefined
-
-  const setHtmlTemplate = async () => {
-    if (!fs.existsSync(htmlPath)) {
-      throw new Error(`${htmlPath} does not exist`)
-    }
-
-    entry = {}
-    htmlTemplate = await fs.promises.readFile(htmlPath, "utf8")
-    htmlTemplate = await posthtml([
-      (tree) => {
-        tree.walk((node) => {
-          if (
-            node.tag === "script" &&
-            typeof node.attrs === "object" &&
-            node.attrs.type === "module" &&
-            node.attrs.src
-          ) {
-            const isExternal = isExternalLink(node.attrs.src)
-            if (!isExternal) {
-              const index = Object.keys(entry).length
-              const [, name] = /\/([^\.]+)\.\w+$/.exec(node.attrs.src) || []
-              entry[`${index}-${name}`] = path.join(options.dir, node.attrs.src)
-              node.attrs.src = `__HAYA_SCRIPT_SRC_${index}__`
-            }
-          }
-          if (
-            node.tag === "link" &&
-            typeof node.attrs === "object" &&
-            node.attrs.rel === "stylesheet" &&
-            node.attrs.href
-          ) {
-            const isExternal = isExternalLink(node.attrs.href)
-            if (!isExternal) {
-              const index = Object.keys(entry).length
-              const [, name] = /\/([^\.]+)\.\w+$/.exec(node.attrs.href) || []
-              entry[`${index}-${name}`] =
-                path.join(options.dir, node.attrs.href) + "?css"
-              node.attrs.href = `__HAYA_STYLE_HREF_${index}__`
-            }
-          }
-          return node
-        })
-      },
-    ])
-      .process(htmlTemplate, {})
-      .then((res) => res.html)
-  }
 
   const handleBuildEnd = () => {
     if (!result) return
     const { metafile, extraCssFiles } = result
-    const entryOutputFiles: string[] = Object.values(entry).map((entryFile) => {
-      for (const relativePath in metafile.outputs) {
-        const file = metafile.outputs[relativePath]
-        if (
-          file.entryPoint &&
-          entryFile === path.join(options.dir, file.entryPoint)
-        ) {
-          return path.relative(
-            options.outDir,
-            path.join(options.dir, relativePath),
-          )
+    const entryOutputFiles: string[] = Object.values(result.entry).map(
+      (entryFile) => {
+        for (const relativePath in metafile.outputs) {
+          const file = metafile.outputs[relativePath]
+          if (
+            file.entryPoint &&
+            entryFile === path.join(options.dir, file.entryPoint)
+          ) {
+            return path.relative(
+              options.outDir,
+              path.join(options.dir, relativePath),
+            )
+          }
         }
-      }
-      throw new Error(`can't find output file for ${entryFile}`)
-    })
+        throw new Error(`can't find output file for ${entryFile}`)
+      },
+    )
 
-    deps = Object.keys(metafile.inputs).map((v) => v.replace(/\?.*$/, ""))
-
-    const html = htmlTemplate
+    const html = result.htmlTemplate
       .replace(/__HAYA_SCRIPT_SRC_(\d+)__/g, (_, index) => {
         return publicPath + entryOutputFiles[index]
       })
@@ -164,7 +114,51 @@ const _build = async ({
 
   const startBuild = async () => {
     const extraCssFiles: Set<string> = new Set()
-    await setHtmlTemplate()
+
+    if (!fs.existsSync(htmlPath)) {
+      throw new Error(`${htmlPath} does not exist`)
+    }
+
+    const entry: Record<string, string> = {}
+    let htmlTemplate = await fs.promises.readFile(htmlPath, "utf8")
+    htmlTemplate = await posthtml([
+      (tree) => {
+        tree.walk((node) => {
+          if (
+            node.tag === "script" &&
+            typeof node.attrs === "object" &&
+            node.attrs.type === "module" &&
+            node.attrs.src
+          ) {
+            const isExternal = isExternalLink(node.attrs.src)
+            if (!isExternal) {
+              const index = Object.keys(entry).length
+              const [, name] = /\/([^\.]+)\.\w+$/.exec(node.attrs.src) || []
+              entry[`${index}-${name}`] = path.join(options.dir, node.attrs.src)
+              node.attrs.src = `__HAYA_SCRIPT_SRC_${index}__`
+            }
+          }
+          if (
+            node.tag === "link" &&
+            typeof node.attrs === "object" &&
+            node.attrs.rel === "stylesheet" &&
+            node.attrs.href
+          ) {
+            const isExternal = isExternalLink(node.attrs.href)
+            if (!isExternal) {
+              const index = Object.keys(entry).length
+              const [, name] = /\/([^\.]+)\.\w+$/.exec(node.attrs.href) || []
+              entry[`${index}-${name}`] =
+                path.join(options.dir, node.attrs.href) + "?css"
+              node.attrs.href = `__HAYA_STYLE_HREF_${index}__`
+            }
+          }
+          return node
+        })
+      },
+    ])
+      .process(htmlTemplate, {})
+      .then((res) => res.html)
 
     const compilerOptions = loadCompilerOptions(options.dir)
     let jsxShimPath: string | undefined
@@ -263,9 +257,13 @@ const _build = async ({
 
     const handle = (result: BuildResult) => {
       return {
+        entry,
         htmlTemplate,
         metafile: result.metafile!,
         extraCssFiles,
+        deps: Object.keys(result.metafile!.inputs).map((v) =>
+          v.replace(/\?.*$/, ""),
+        ),
         rebuild: async () => {
           const rebuildResult = await result.rebuild!()
           return handle(rebuildResult)
@@ -310,7 +308,7 @@ const _build = async ({
             reload()
           }
         } else if (
-          deps.some((dep) => path.join(options.dir, dep) === filepath)
+          result.deps.some((dep) => path.join(options.dir, dep) === filepath)
         ) {
           try {
             result = await result.rebuild()
