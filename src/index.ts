@@ -12,6 +12,7 @@ import { copyFolderSync, outputFileSync, removeFolderSync } from "./fs"
 import { loadCompilerOptions, loadConfig, loadEnv, UserConfig } from "./config"
 import { isExternalLink, lookupFile, truthy } from "./utils"
 import { cssPlugin } from "./esbuild/css-plugin"
+import { rawPlugin } from "./esbuild/raw-plugin"
 
 const slash = (input: string) => input.replace(/\\/g, "/")
 
@@ -256,6 +257,7 @@ const _build = async ({
           },
         },
         cssPlugin(extraCssFiles),
+        rawPlugin(),
       ],
     })
 

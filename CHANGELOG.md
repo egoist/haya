@@ -1,6 +1,7 @@
 ## Unreleased
 
 - Adding hash to output CSS filename in production build
+- Adding support for loading assets as strings via `?raw` query parameter, e.g. `import assetAsString from './shader.glsl?raw'`, `.txt` files are always loaded as string.
 
 ## 0.0.6
 
