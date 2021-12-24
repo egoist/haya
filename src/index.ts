@@ -39,6 +39,17 @@ const handleError = async (error: any) => {
   }
 }
 
+const transformAssetUrls: Record<string, string[]> = {
+  script: ["src"],
+  link: ["href"],
+  img: ["src"],
+  image: ["xlink:href", "href"],
+  source: ["src"],
+  video: ["src", "poster"],
+  use: ["xlink:href", "href"],
+  audio: ["src"],
+}
+
 type BuildEndArgs = { html: string }
 
 const _build = async ({
@@ -123,41 +134,33 @@ const _build = async ({
     htmlTemplate = await posthtml([
       (tree) => {
         tree.walk((node) => {
-          if (
-            node.tag === "script" &&
-            typeof node.attrs === "object" &&
-            node.attrs.type === "module" &&
-            node.attrs.src
-          ) {
-            const source = node.attrs.src.split("?")[0]
-            const isExternal = isExternalResource(source, options.publicDir)
-            if (!isExternal) {
-              let [, name] = /\/([^\.\/]+)\.\w+$/.exec(source) || []
-              name = name.replace(/[^\w]/g, "-")
-              const hash = hashsum(source)
-              const entryName = `${name}-${hash}`
-              entry[entryName] = path.join(options.dir, source)
-              node.attrs.src = `HAYA_REPLACE[${entryName}]`
+          if (!node.attrs) return node
+
+          for (const tag in transformAssetUrls) {
+            if (node.tag !== tag) continue
+            const attrs = transformAssetUrls[tag]
+            for (const attr of attrs) {
+              const link = node.attrs[attr]
+              if (link) {
+                const source = link.split("?")[0]
+                const isExternal = isExternalResource(source, options.publicDir)
+                if (!isExternal) {
+                  if (tag === "script" && node.attrs.type !== "module") {
+                    throw new Error(`type="module" is required on <script> tag`)
+                  }
+                  let [, name] = /\/([^\.\/]+)\.\w+$/.exec(source) || []
+                  name = name.replace(/[^\w]/g, "-")
+                  const hash = hashsum(source)
+                  const entryName = `${name}-${hash}`
+                  entry[entryName] =
+                    path.join(options.dir, source) +
+                    (/\.(css|postcss)$/.test(source) ? "?css" : "")
+                  node.attrs[attr] = `HAYA_REPLACE[${entryName}]`
+                }
+              }
             }
           }
-          if (
-            node.tag === "link" &&
-            typeof node.attrs === "object" &&
-            node.attrs.href
-          ) {
-            const source = node.attrs.href.split("?")[0]
-            const isExternal = isExternalResource(source, options.publicDir)
-            if (!isExternal) {
-              let [, name] = /\/([^\.\/]+)\.\w+$/.exec(source) || []
-              name = name.replace(/[^\w]/g, "-")
-              const hash = hashsum(source)
-              const entryName = `${name}-${hash}`
-              entry[entryName] =
-                path.join(options.dir, source) +
-                (/\.(css|postcss)$/.test(source) ? "?css" : "")
-              node.attrs.href = `HAYA_REPLACE[${entryName}]`
-            }
-          }
+
           return node
         })
       },
