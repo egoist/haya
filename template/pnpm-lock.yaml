@@ -3,14 +3,14 @@ lockfileVersion: 5.3
 specifiers:
   '@types/react': ^17.0.38
   '@types/react-dom': ^17.0.11
-  haya: ^0.0.6
+  haya: ^0.0.7
   react: ^17.0.2
   react-dom: ^17.0.2
 
 devDependencies:
   '@types/react': 17.0.38
   '@types/react-dom': 17.0.11
-  haya: 0.0.6
+  haya: 0.0.7
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
 
@@ -268,8 +268,8 @@ packages:
       is-glob: 4.0.3
     dev: true
 
-  /haya/0.0.6:
-    resolution: {integrity: sha512-V4BvMnPWREhC6mtjIHGdyW/vFCFaEURT0NRfIWZF+dwysHB844yeaUkV9SjKb1kCaRF9JC65Uhp60oPWgd/AMA==}
+  /haya/0.0.7:
+    resolution: {integrity: sha512-O28h8seOu3xSH/CNlHGvSrc7CgOvqng0a+bZY5DFJkPyK/zLNzIU9Hgj+MJZA1BcY4s3vMaXlYCN7ElNJq8ryQ==}
     engines: {node: '>=16'}
     hasBin: true
     dependencies:
