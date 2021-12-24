@@ -73,19 +73,13 @@ export const cssPlugin = (extraCssFiles: Set<string>): Plugin => {
         }
 
         const result = await esbuild.build({
-          format: "esm",
-          bundle: true,
-          outdir: build.initialOptions.outdir!,
-          entryPoints: [args.path],
-          absWorkingDir: build.initialOptions.absWorkingDir,
-          sourcemap: build.initialOptions.sourcemap,
-          minify: build.initialOptions.minify,
-          logLevel: build.initialOptions.logLevel,
-          assetNames: build.initialOptions.assetNames,
-          entryNames: build.initialOptions.entryNames,
-          chunkNames: build.initialOptions.chunkNames,
+          ...build.initialOptions,
           metafile: true,
+          entryPoints: [args.path],
           plugins: [
+            ...build.initialOptions.plugins!.filter(
+              (p) => p.name !== "progress" && p.name !== "css",
+            ),
             {
               name: "import-css",
               setup(build) {

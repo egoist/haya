@@ -14,6 +14,7 @@ import { loadCompilerOptions, loadConfig, loadEnv, UserConfig } from "./config"
 import { isExternalResource, lookupFile, truthy } from "./utils"
 import { cssPlugin } from "./esbuild/css-plugin"
 import { rawPlugin } from "./esbuild/raw-plugin"
+import { workerPlugin } from "./esbuild/worker-plugin"
 
 const slash = (input: string) => input.replace(/\\/g, "/")
 
@@ -262,6 +263,7 @@ const _build = async ({
         },
         cssPlugin(extraCssFiles),
         rawPlugin(),
+        workerPlugin(),
       ],
     })
 

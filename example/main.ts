@@ -1,5 +1,6 @@
 import { createApp, h } from "vue"
 import { createRouter, createWebHistory, RouterView } from "vue-router"
+import MyWorker from "./worker?worker"
 import "./main.css"
 // @ts-expect-error
 import _ from "lodash"
@@ -28,5 +29,7 @@ createApp({
     }),
   )
   .mount("#app")
+
+const worker = new MyWorker()
 
 import("./img/favicon.svg").then(console.log)
