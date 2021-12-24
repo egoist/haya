@@ -2,6 +2,7 @@
 
 - Adding hash to output CSS filename in production build
 - Adding support for loading assets as strings via `?raw` query parameter, e.g. `import assetAsString from './shader.glsl?raw'`, `.txt` files are always loaded as string.
+- Any `<link>` element with `href` attribute will be included in the bundle process, unless the href points to a file in `public` dir or it's an external URL.
 
 ## 0.0.6
 

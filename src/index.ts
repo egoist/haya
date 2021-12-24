@@ -8,9 +8,10 @@ import sirv from "sirv"
 import chokidar from "chokidar"
 import { WebSocketServer } from "ws"
 import timeSpan, { TimeEndFunction } from "time-span"
+import hashsum from "hash-sum"
 import { copyFolderSync, outputFileSync, removeFolderSync } from "./fs"
 import { loadCompilerOptions, loadConfig, loadEnv, UserConfig } from "./config"
-import { isExternalLink, lookupFile, truthy } from "./utils"
+import { isExternalResource, lookupFile, truthy } from "./utils"
 import { cssPlugin } from "./esbuild/css-plugin"
 import { rawPlugin } from "./esbuild/raw-plugin"
 
@@ -57,31 +58,29 @@ const _build = async ({
   const handleBuildEnd = () => {
     if (!result) return
     const { metafile, extraCssFiles } = result
-    const entryOutputFiles: string[] = Object.values(result.entry).map(
-      (entryFile) => {
-        for (const relativePath in metafile.outputs) {
-          const file = metafile.outputs[relativePath]
-          if (
-            file.entryPoint &&
-            entryFile === path.join(options.dir, file.entryPoint)
-          ) {
-            return path.relative(
-              options.outDir,
-              path.join(options.dir, relativePath),
-            )
-          }
+
+    const entryOutputMap: Record<string, string> = {}
+
+    Object.keys(result.entry).forEach((entryName) => {
+      const entryFile = result!.entry[entryName]
+      for (const outputName in metafile.outputs) {
+        const inputs = metafile.outputs[outputName].inputs
+
+        if (path.relative(options.dir, entryFile) in inputs) {
+          entryOutputMap[entryName] =
+            publicPath +
+            path.relative(options.outDir, path.join(options.dir, outputName))
+          return
         }
-        throw new Error(`can't find output file for ${entryFile}`)
-      },
-    )
+      }
+      throw new Error(`can't find output file for ${entryName}`)
+    })
 
     const html = result.htmlTemplate
-      .replace(/__HAYA_SCRIPT_SRC_(\d+)__/g, (_, index) => {
-        return publicPath + entryOutputFiles[index]
+      .replace(/HAYA_REPLACE\[([^\]]+)\]/g, (_, entryName) => {
+        return entryOutputMap[entryName]
       })
-      .replace(/__HAYA_STYLE_HREF_(\d+)__/g, (_, index) => {
-        return publicPath + entryOutputFiles[index]
-      })
+
       .replace(
         "</head>",
         `${[...extraCssFiles]
@@ -130,27 +129,33 @@ const _build = async ({
             node.attrs.type === "module" &&
             node.attrs.src
           ) {
-            const isExternal = isExternalLink(node.attrs.src)
+            const source = node.attrs.src.split("?")[0]
+            const isExternal = isExternalResource(source, options.publicDir)
             if (!isExternal) {
-              const index = Object.keys(entry).length
-              const [, name] = /\/([^\.\/]+)\.\w+$/.exec(node.attrs.src) || []
-              entry[`${index}-${name}`] = path.join(options.dir, node.attrs.src)
-              node.attrs.src = `__HAYA_SCRIPT_SRC_${index}__`
+              let [, name] = /\/([^\.\/]+)\.\w+$/.exec(source) || []
+              name = name.replace(/[^\w]/g, "-")
+              const hash = hashsum(source)
+              const entryName = `${name}-${hash}`
+              entry[entryName] = path.join(options.dir, source)
+              node.attrs.src = `HAYA_REPLACE[${entryName}]`
             }
           }
           if (
             node.tag === "link" &&
             typeof node.attrs === "object" &&
-            node.attrs.rel === "stylesheet" &&
             node.attrs.href
           ) {
-            const isExternal = isExternalLink(node.attrs.href)
+            const source = node.attrs.href.split("?")[0]
+            const isExternal = isExternalResource(source, options.publicDir)
             if (!isExternal) {
-              const index = Object.keys(entry).length
-              const [, name] = /\/([^\.\/]+)\.\w+$/.exec(node.attrs.href) || []
-              entry[`${index}-${name}`] =
-                path.join(options.dir, node.attrs.href) + "?css"
-              node.attrs.href = `__HAYA_STYLE_HREF_${index}__`
+              let [, name] = /\/([^\.\/]+)\.\w+$/.exec(source) || []
+              name = name.replace(/[^\w]/g, "-")
+              const hash = hashsum(source)
+              const entryName = `${name}-${hash}`
+              entry[entryName] =
+                path.join(options.dir, source) +
+                (/\.(css|postcss)$/.test(source) ? "?css" : "")
+              node.attrs.href = `HAYA_REPLACE[${entryName}]`
             }
           }
           return node
@@ -199,7 +204,9 @@ const _build = async ({
       sourcesContent: options.dev,
       incremental: options.dev,
       publicPath,
-      entryNames: options.dev ? "[name]" : "[name]-[hash]",
+      entryNames: options.dir ? "[name]" : "[name]-[hash]",
+      assetNames: "[name]-[hash]",
+      chunkNames: "[name]-[hash]",
       minify: !options.dev,
       legalComments: "none",
       logLevel: "silent",
@@ -300,7 +307,7 @@ const _build = async ({
           } catch (error) {
             handleError(error)
           }
-        } else if (filepath.startsWith(options.publicFolder)) {
+        } else if (filepath.startsWith(options.publicDir)) {
           if (
             reload &&
             /\.(css|js|jpg|jpeg|png|webp|gif|svg|ttf|otf)$/.test(filepath)
@@ -327,21 +334,21 @@ export type NormalizedOptions = {
   dir: string
   dev: boolean
   outDir: string
-  publicFolder: string
+  publicDir: string
   env: Record<string, string>
 }
 
 const normalizeOptions = (options: Options): NormalizedOptions => {
   const dir = path.resolve(options.dir || ".")
   const outDir = path.join(dir, "dist")
-  const publicFolder = path.join(dir, "public")
+  const publicDir = path.join(dir, "public")
   const dev = !!options.dev
   const env = loadEnv(dev ? "development" : "production", dir)
   return {
     dir,
     dev,
     outDir,
-    publicFolder,
+    publicDir,
     env,
   }
 }
@@ -376,7 +383,7 @@ export const createServer = async (
       return next()
     }
 
-    sirv(options.publicFolder, { dev: true })(req, res, next)
+    sirv(options.publicDir, { dev: true })(req, res, next)
   })
 
   let html = ""
@@ -427,8 +434,8 @@ export const build = async (_options: Options) => {
     },
   })
 
-  // Copy public folder to output dir
-  copyFolderSync(options.publicFolder, options.outDir)
+  // Copy public dir to output dir
+  copyFolderSync(options.publicDir, options.outDir)
 }
 
 export const preview = async (

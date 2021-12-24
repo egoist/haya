@@ -32,3 +32,7 @@ export const removeFolderSync = (dir: string) => {
     })
   }
 }
+
+export const removeFileSync = (filepath: string) => {
+  fs.rmSync(filepath, { force: true })
+}

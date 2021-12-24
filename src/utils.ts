@@ -31,8 +31,16 @@ export function lookupFile(
   }
 }
 
-export const isExternalLink = (input: string) => {
-  return /^(\/\/|https?:\/\/)/.test(input)
+// URL and files in public directory are external resources
+// So we don't bundle them
+export const isExternalResource = (link: string, publicDir: string) => {
+  if (/^(\/\/|https?:\/\/)/.test(link)) return true
+
+  if (fs.existsSync(path.join(publicDir, link))) {
+    return true
+  }
+
+  return false
 }
 
 export const localImport = async <T>(

@@ -1,8 +1,8 @@
 import { createApp, h } from "vue"
 import { createRouter, createWebHistory, RouterView } from "vue-router"
+import "./main.css"
 // @ts-expect-error
 import _ from "lodash"
-
 console.log(_)
 
 createApp({
@@ -28,3 +28,5 @@ createApp({
     }),
   )
   .mount("#app")
+
+import("./img/favicon.svg").then(console.log)
