@@ -22,7 +22,7 @@ This guide is heavily copied from [Vite](https://vitejs.dev), since their usages
 
 Vite shines at local development, it features a no-bundle dev server which is very fast and has a very good support for HMR. Thanks to [dependency prebundling with esbuild](https://vitejs.dev/guide/dep-pre-bundling.html), Vite can also create a production build fast using Rollup.
 
-The idea of Haya is not to replace Vite at development, Haya's dev server works, as long as full page reloading works for your app, but the main goal is to make the production even faster by fully leveraging esbuild. Currently Haya can already build Vite's default starter projects, and it's trying to keep improving on that.
+The idea of Haya is not to replace Vite at development, Haya's dev server works, as long as full page reloading works for your app, but the main goal is to make the production build even faster by fully leveraging esbuild. Currently Haya can already build Vite's default starter projects, and it's trying to keep improving on that.
 
 I plan to at least add HMR for CSS files, but HMR for JS files needs better support from esbuild itself, and it won't be there anytime soon.
 
