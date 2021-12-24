@@ -133,7 +133,7 @@ const _build = async ({
             const isExternal = isExternalLink(node.attrs.src)
             if (!isExternal) {
               const index = Object.keys(entry).length
-              const [, name] = /\/([^\.]+)\.\w+$/.exec(node.attrs.src) || []
+              const [, name] = /\/([^\.\/]+)\.\w+$/.exec(node.attrs.src) || []
               entry[`${index}-${name}`] = path.join(options.dir, node.attrs.src)
               node.attrs.src = `__HAYA_SCRIPT_SRC_${index}__`
             }
@@ -147,7 +147,7 @@ const _build = async ({
             const isExternal = isExternalLink(node.attrs.href)
             if (!isExternal) {
               const index = Object.keys(entry).length
-              const [, name] = /\/([^\.]+)\.\w+$/.exec(node.attrs.href) || []
+              const [, name] = /\/([^\.\/]+)\.\w+$/.exec(node.attrs.href) || []
               entry[`${index}-${name}`] =
                 path.join(options.dir, node.attrs.href) + "?css"
               node.attrs.href = `__HAYA_STYLE_HREF_${index}__`
