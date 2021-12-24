@@ -1,4 +1,4 @@
-## Unreleased
+## 0.0.8
 
 - Fixed a regression that output filename is not hashed properly 😅 due to a typo
 
