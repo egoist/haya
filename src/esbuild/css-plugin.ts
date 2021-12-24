@@ -81,6 +81,9 @@ export const cssPlugin = (extraCssFiles: Set<string>): Plugin => {
           sourcemap: build.initialOptions.sourcemap,
           minify: build.initialOptions.minify,
           logLevel: build.initialOptions.logLevel,
+          assetNames: build.initialOptions.assetNames,
+          entryNames: build.initialOptions.entryNames,
+          chunkNames: build.initialOptions.chunkNames,
           metafile: true,
           plugins: [
             {

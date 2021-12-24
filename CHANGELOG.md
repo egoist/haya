@@ -1,3 +1,7 @@
+## Unreleased
+
+- Adding hash to output CSS filename in production build
+
 ## v0.0.6
 
 - I'm trying to improve Vite compatibility, now it loads env variables starting with `VITE_` too
