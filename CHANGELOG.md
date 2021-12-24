@@ -1,3 +1,7 @@
+## Unreleased
+
+- Env variables are now available under both `process.env` and `import.meta.env`, there're also `import.meta.env.DEV`, `import.meta.env.PROD`, `import.meta.env.BASE_URL` and `import.meta.env.MODE`, improving Vite compatibility.
+
 ## 0.0.8
 
 - Fixed a regression that output filename is not hashed properly 😅 due to a typo

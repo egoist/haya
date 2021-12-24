@@ -64,7 +64,7 @@ const _build = async ({
 }) => {
   const htmlPath = path.join(options.dir, "index.html")
 
-  const publicPath = "/"
+  const publicPath = options.base
   let result: Awaited<ReturnType<typeof startBuild>> | undefined
 
   const handleBuildEnd = () => {
@@ -239,9 +239,9 @@ const _build = async ({
           return {
             ...res,
             [`process.env.${key}`]: JSON.stringify(options.env[key]),
+            [`import.meta.env.${key}`]: JSON.stringify(options.env[key]),
           }
         }, {}),
-        "process.env.NODE_ENV": options.dev ? '"development"' : '"production"',
         __DEV__: options.dev ? "true" : "false",
       },
       plugins: [
@@ -340,7 +340,8 @@ export type NormalizedOptions = {
   dev: boolean
   outDir: string
   publicDir: string
-  env: Record<string, string>
+  env: Record<string, string | boolean>
+  base: string
 }
 
 const normalizeOptions = (options: Options): NormalizedOptions => {
@@ -348,13 +349,22 @@ const normalizeOptions = (options: Options): NormalizedOptions => {
   const outDir = path.join(dir, "dist")
   const publicDir = path.join(dir, "public")
   const dev = !!options.dev
-  const env = loadEnv(dev ? "development" : "production", dir)
+  const mode = dev ? "development" : "production"
+  const base = "/"
+  const env: Record<string, string | boolean> = {
+    ...loadEnv(mode, dir),
+    NODE_ENV: dev ? "development" : "production",
+    PROD: !dev,
+    DEV: dev,
+    BASE_URL: base,
+  }
   return {
     dir,
     dev,
     outDir,
     publicDir,
     env,
+    base,
   }
 }
 
