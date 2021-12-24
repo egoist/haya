@@ -1,6 +1,6 @@
 {
   "name": "haya",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "esbuild based dev server and production bundler",
   "sideEffects": false,
   "publishConfig": {
