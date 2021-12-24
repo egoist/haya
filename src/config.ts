@@ -1,7 +1,7 @@
 import fs from "fs"
 import dotenv from "dotenv"
 import dotenvExpand from "dotenv-expand"
-import { bundleRequire } from "bundle-require"
+import { bundleRequire, loadTsConfig } from "bundle-require"
 import { DeepRequired } from "ts-essentials"
 import { arraify, lookupFile } from "./utils"
 
@@ -38,7 +38,7 @@ export function loadEnv(
   }
 
   for (const file of envFiles) {
-    const path = lookupFile(envDir, [file], true)
+    const path = lookupFile(envDir, [file])
     if (path) {
       const parsed = dotenv.parse(fs.readFileSync(path), {
         debug: !!process.env.DEBUG || undefined,
@@ -84,11 +84,12 @@ export const loadConfig = async (
   path?: string
   dependencies: string[]
 }> => {
-  const configPath = lookupFile(
-    dir,
-    ["haya.config.ts", "haya.config.mjs", "haya.config.js", "haya.config.cjs"],
-    true,
-  )
+  const configPath = lookupFile(dir, [
+    "haya.config.ts",
+    "haya.config.mjs",
+    "haya.config.js",
+    "haya.config.cjs",
+  ])
   let userConfig: UserConfig = {}
   let dependencies: string[] = []
   if (configPath) {
@@ -113,4 +114,9 @@ export const loadConfig = async (
     path: configPath,
     dependencies,
   }
+}
+
+export const loadCompilerOptions = (dir: string) => {
+  const config = loadTsConfig(dir)
+  return { data: config.data?.compilerOptions || {}, path: config.path }
 }

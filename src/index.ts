@@ -9,8 +9,8 @@ import chokidar from "chokidar"
 import { WebSocketServer } from "ws"
 import timeSpan, { TimeEndFunction } from "time-span"
 import { copyFolderSync, outputFileSync, removeFolderSync } from "./fs"
-import { loadConfig, loadEnv, UserConfig } from "./config"
-import { isExternalLink } from "./utils"
+import { loadCompilerOptions, loadConfig, loadEnv, UserConfig } from "./config"
+import { isExternalLink, lookupFile, truthy } from "./utils"
 import { cssPlugin } from "./esbuild/css-plugin"
 
 const slash = (input: string) => input.replace(/\\/g, "/")
@@ -164,6 +164,31 @@ const _build = async ({
   const startBuild = async () => {
     const extraCssFiles: Set<string> = new Set()
     await setHtmlTemplate()
+
+    const compilerOptions = loadCompilerOptions(options.dir)
+    let jsxShimPath: string | undefined
+    if (compilerOptions.data.jsx?.includes("react")) {
+      const names: string[] = [
+        compilerOptions.data.jsxFactory,
+        compilerOptions.data.jsxFragmentFactory,
+      ].filter((v) => v && !v.includes("."))
+      const jsxImportSource = compilerOptions.data.jsxImportSource || "react"
+      const jsxShim =
+        names.length > 0
+          ? `import {${names.join(
+              ",",
+            )}} from '${jsxImportSource}';export {${names.join(",")}}`
+          : `import * as React from 'react';export { React }`
+      const nodeModulesDir = lookupFile(options.dir, ["node_modules"], {
+        type: "dir",
+      })
+      if (!nodeModulesDir) {
+        throw new Error("node_modules directory not found")
+      }
+      jsxShimPath = path.join(nodeModulesDir, ".haya/jsx-shim.js")
+      outputFileSync(jsxShimPath, jsxShim)
+    }
+
     const result = await esbuild.build({
       absWorkingDir: options.dir,
       entryPoints: entry,
@@ -171,6 +196,7 @@ const _build = async ({
       outdir: options.outDir,
       platform: "browser",
       mainFields: ["module", "browser", "main"],
+      inject: [jsxShimPath].filter(truthy),
       metafile: true,
       format: "esm",
       splitting: true,

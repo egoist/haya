@@ -8,18 +8,26 @@ export function arraify<T>(target: T | T[]): T[] {
 
 export function lookupFile(
   dir: string,
-  formats: string[],
-  pathOnly = false,
+  names: string[],
+  opts: { resolveOnly?: boolean; type?: "file" | "dir" } = {},
 ): string | undefined {
-  for (const format of formats) {
-    const fullPath = path.join(dir, format)
-    if (fs.existsSync(fullPath) && fs.statSync(fullPath).isFile()) {
-      return pathOnly ? fullPath : fs.readFileSync(fullPath, "utf-8")
+  const { resolveOnly = true, type = "file" } = opts
+  for (const name of names) {
+    const fullPath = path.join(dir, name)
+    if (fs.existsSync(fullPath)) {
+      const isDir = fs.statSync(fullPath).isDirectory()
+      if (type === "file" && isDir) {
+        continue
+      }
+      if (type === "dir" && !isDir) {
+        continue
+      }
+      return resolveOnly ? fullPath : fs.readFileSync(fullPath, "utf-8")
     }
   }
   const parentDir = path.dirname(dir)
   if (parentDir !== dir) {
-    return lookupFile(parentDir, formats, pathOnly)
+    return lookupFile(parentDir, names, opts)
   }
 }
 
@@ -34,4 +42,10 @@ export const localImport = async <T>(
   const resolved = resolveFrom.silent(dir, id)
 
   return resolved && (await import(id))
+}
+
+type Truthy<T> = T extends false | "" | 0 | null | undefined ? never : T // from lodash
+
+export function truthy<T>(value: T): value is Truthy<T> {
+  return Boolean(value)
 }
