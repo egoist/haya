@@ -208,7 +208,7 @@ const _build = async ({
       sourcesContent: options.dev,
       incremental: options.dev,
       publicPath,
-      entryNames: options.dir ? "[name]" : "[name]-[hash]",
+      entryNames: options.dev ? "[name]" : "[name]-[hash]",
       assetNames: "[name]-[hash]",
       chunkNames: "[name]-[hash]",
       minify: !options.dev,

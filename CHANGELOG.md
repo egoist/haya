@@ -1,3 +1,7 @@
+## Unreleased
+
+- Fixed a regression that output filename is not hashed properly 😅 due to a typo
+
 ## 0.0.7
 
 - Adding hash to output CSS filename in production build
