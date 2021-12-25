@@ -1,11 +1,11 @@
 lockfileVersion: 5.3
 
 specifiers:
-  '@types/react': ^17.0.38
-  '@types/react-dom': ^17.0.11
-  haya: ^0.0.10
-  react: ^17.0.2
-  react-dom: ^17.0.2
+  '@types/react': 17.0.38
+  '@types/react-dom': 17.0.11
+  haya: 0.0.10
+  react: 17.0.2
+  react-dom: 17.0.2
 
 devDependencies:
   '@types/react': 17.0.38
@@ -189,8 +189,8 @@ packages:
     dev: true
     optional: true
 
-  /esbuild-plugin-vue/0.2.3_esbuild@0.14.8:
-    resolution: {integrity: sha512-OHPztH8KwPMN5IYX6CWUqWbSIpZHyKGdA2xu8744Ul18qrQr9Rm+LoMePROUOItSyw+iixhsScgl/bUNLP0CDw==}
+  /esbuild-plugin-vue/0.2.4_esbuild@0.14.8:
+    resolution: {integrity: sha512-1noq1Tnnv4WAgdt5UROuNNIwQ7ppE5jlLB2MQD+XdzgprmOksGNTZlAEyYYF8oPMkq0qk1GB8KJJMTr2aE2Nzg==}
     peerDependencies:
       esbuild: '>=0.11  <=1'
     dependencies:
@@ -294,7 +294,7 @@ packages:
     dependencies:
       chokidar: 3.5.2
       esbuild: 0.14.8
-      esbuild-plugin-vue: 0.2.3_esbuild@0.14.8
+      esbuild-plugin-vue: 0.2.4_esbuild@0.14.8
       ws: 8.4.0
     transitivePeerDependencies:
       - bufferutil
