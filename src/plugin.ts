@@ -34,6 +34,10 @@ export type Plugin = {
 
 const arraify = <T>(x: T | T[]): T[] => (Array.isArray(x) ? x : [x])
 
+const toEsbuildError = (error: Error, pluginName: string) => {
+  return { text: error.message, pluginName }
+}
+
 export const wrapEsbuildPlugins = (
   plugins: (Plugin | EsbuildPlugin)[],
   state: BuildState,
@@ -78,13 +82,15 @@ export const wrapEsbuildPlugins = (
         if (ignorePlugins?.includes(plugin.name)) {
           continue
         }
+        const pluginName = plugin.name
+
         const buildProxy: PluginBuild = {
           ...build,
           onResolve(options, callback) {
-            onResolves.push({ pluginName: plugin.name, options, callback })
+            onResolves.push({ pluginName, options, callback })
           },
           onLoad(options, callback) {
-            onLoads.push({ pluginName: plugin.name, options, callback })
+            onLoads.push({ pluginName, options, callback })
           },
         }
         await plugin.setup(buildProxy)
@@ -92,7 +98,13 @@ export const wrapEsbuildPlugins = (
 
       for (const onResolve of onResolves) {
         build.onResolve(onResolve.options, async (args) => {
-          const result = await onResolve.callback(args)
+          const result = await Promise.resolve(onResolve.callback(args)).catch(
+            (error) => {
+              return {
+                errors: [toEsbuildError(error, onResolve.pluginName)],
+              } as OnResolveResult
+            },
+          )
           if (result?.watchFiles) {
             build.addWatchFiles(result.watchFiles)
           }
@@ -108,7 +120,13 @@ export const wrapEsbuildPlugins = (
 
       for (const onLoad of onLoads) {
         build.onLoad(onLoad.options, async (args) => {
-          const result = await onLoad.callback(args)
+          const result = await Promise.resolve(onLoad.callback(args)).catch(
+            (error) => {
+              return {
+                errors: [toEsbuildError(error, onLoad.pluginName)],
+              } as OnLoadResult
+            },
+          )
           if (result?.watchFiles) {
             build.addWatchFiles(result.watchFiles)
           }
