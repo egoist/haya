@@ -8,6 +8,7 @@ import sirv from "sirv"
 import chokidar from "chokidar"
 import { WebSocketServer } from "ws"
 import hashsum from "hash-sum"
+import vuePlugin from "esbuild-plugin-vue"
 import { copyFolderSync, outputFileSync } from "./fs"
 import {
   loadCompilerOptions,
@@ -210,6 +211,7 @@ const _build = async ({
         cssPlugin(),
         rawPlugin(),
         workerPlugin(),
+        vuePlugin(),
         ...config.__esbuildPlugins,
       ],
       {

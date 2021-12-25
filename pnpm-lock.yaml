@@ -5,6 +5,7 @@ specifiers:
   '@types/ejs': ^3.1.0
   '@types/hash-sum': ^1.0.0
   '@types/ws': ^8.2.2
+  '@vue/compiler-sfc': ^3.2.26
   autoprefixer: ^10.4.0
   bundle-require: ^2.2.0
   cac: ^6.7.12
@@ -12,6 +13,7 @@ specifiers:
   dotenv: ^10.0.0
   dotenv-expand: ^5.1.0
   esbuild: ^0.14.8
+  esbuild-plugin-vue: ^0.2.1
   h3: ^0.3.8
   hash-sum: ^2.0.0
   lodash: ^4.17.21
@@ -41,11 +43,13 @@ devDependencies:
   '@types/ejs': 3.1.0
   '@types/hash-sum': 1.0.0
   '@types/ws': 8.2.2
+  '@vue/compiler-sfc': 3.2.26
   autoprefixer: 10.4.0_postcss@8.4.5
   bundle-require: 2.2.0_esbuild@0.14.8
   cac: 6.7.12
   dotenv: 10.0.0
   dotenv-expand: 5.1.0
+  esbuild-plugin-vue: 0.2.1_esbuild@0.14.8
   h3: 0.3.8
   hash-sum: 2.0.0
   lodash: 4.17.21
@@ -649,6 +653,16 @@ packages:
     os: [openbsd]
     requiresBuild: true
     optional: true
+
+  /esbuild-plugin-vue/0.2.1_esbuild@0.14.8:
+    resolution: {integrity: sha512-VeN2ZEzSvYQuRhV+zYkJ6tAI/xExYMjwjGs3Tzgk2l7YGKe5CxHGfyc7YxIZee3VSUZG778f/62vGqkLVLpX4w==}
+    peerDependencies:
+      esbuild: '>=0.11  <=1'
+    dependencies:
+      esbuild: 0.14.8
+      hash-sum: 2.0.0
+      resolve-from: 5.0.0
+    dev: true
 
   /esbuild-sunos-64/0.14.8:
     resolution: {integrity: sha512-xV41Wa8imziM/2dbWZjLKQbIETRgo5dE0oc/uPsgaecJhsrdA0VkGa/V432LJSUYv967xHDQdoRRl5tr80+NnQ==}
