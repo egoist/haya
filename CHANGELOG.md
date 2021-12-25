@@ -1,4 +1,4 @@
-## Unreleased
+## 0.0.10
 
 - **Vue**: Make sure only CSS files are injected to head
 

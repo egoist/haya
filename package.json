@@ -1,6 +1,6 @@
 {
   "name": "haya",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "esbuild based dev server and production bundler",
   "publishConfig": {
     "access": "public"
@@ -66,9 +66,9 @@
     "vue-router": "^4.0.12"
   },
   "dependencies": {
-    "esbuild-plugin-vue": "^0.2.1",
     "chokidar": "^3.5.2",
     "esbuild": "^0.14.8",
+    "esbuild-plugin-vue": "^0.2.1",
     "ws": "^8.4.0"
   },
   "peerDependencies": {
