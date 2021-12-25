@@ -7,14 +7,21 @@ import posthtml from "posthtml"
 import sirv from "sirv"
 import chokidar from "chokidar"
 import { WebSocketServer } from "ws"
-import timeSpan, { TimeEndFunction } from "time-span"
 import hashsum from "hash-sum"
-import { copyFolderSync, outputFileSync, removeFolderSync } from "./fs"
-import { loadCompilerOptions, loadConfig, loadEnv, UserConfig } from "./config"
+import { copyFolderSync, outputFileSync } from "./fs"
+import {
+  loadCompilerOptions,
+  loadConfig,
+  loadEnv,
+  ResolvedConfig,
+  UserConfig,
+} from "./config"
 import { isExternalResource, lookupFile, truthy } from "./utils"
 import { cssPlugin } from "./esbuild/css-plugin"
 import { rawPlugin } from "./esbuild/raw-plugin"
 import { workerPlugin } from "./esbuild/worker-plugin"
+import { wrapEsbuildPlugins } from "./plugin"
+import { progressPlugin } from "./esbuild/progress-plugin"
 
 const slash = (input: string) => input.replace(/\\/g, "/")
 
@@ -55,10 +62,12 @@ type BuildEndArgs = { html: string }
 
 const _build = async ({
   options,
+  config,
   buildEnd,
   reload,
 }: {
   options: NormalizedOptions
+  config: ResolvedConfig
   buildEnd: (args: BuildEndArgs) => void
   reload?: () => void
 }) => {
@@ -125,6 +134,8 @@ const _build = async ({
 
   const startBuild = async () => {
     const extraCssFiles: Set<string> = new Set()
+    const watchFiles: Set<string> = new Set()
+    const watchDirs: Set<string> = new Set()
 
     if (!fs.existsSync(htmlPath)) {
       throw new Error(`${htmlPath} does not exist`)
@@ -193,6 +204,21 @@ const _build = async ({
       outputFileSync(jsxShimPath, jsxShim)
     }
 
+    const esbuildPlugin = wrapEsbuildPlugins(
+      [
+        progressPlugin(),
+        cssPlugin(),
+        rawPlugin(),
+        workerPlugin(),
+        ...config.__esbuildPlugins,
+      ],
+      {
+        extraCssFiles,
+        watchFiles,
+        watchDirs,
+      },
+    )
+
     const result = await esbuild.build({
       absWorkingDir: options.dir,
       entryPoints: entry,
@@ -244,35 +270,16 @@ const _build = async ({
         }, {}),
         __DEV__: options.dev ? "true" : "false",
       },
-      plugins: [
-        {
-          name: "progress",
-          setup(build) {
-            let end: TimeEndFunction | undefined
-            build.onStart(async () => {
-              end = timeSpan()
-              extraCssFiles.clear()
-              removeFolderSync(options.outDir)
-            })
-            build.onEnd(() => {
-              if (end) {
-                console.log(`⚡️ Built in ${end.rounded()}ms`)
-              }
-            })
-          },
-        },
-        cssPlugin(extraCssFiles),
-        rawPlugin(),
-        workerPlugin(),
-      ],
+      plugins: [esbuildPlugin],
     })
-
     const handle = (result: BuildResult) => {
       return {
         entry,
         htmlTemplate,
         metafile: result.metafile!,
         extraCssFiles,
+        watchDirs,
+        watchFiles,
         deps: Object.keys(result.metafile!.inputs).map((v) =>
           v.replace(/\?.*$/, ""),
         ),
@@ -297,14 +304,24 @@ const _build = async ({
   if (options.dev) {
     chokidar
       .watch(options.dir, {
-        ignored: ["**/node_modules/**", "**/dist/**"],
+        ignored: ["**/node_modules/**", "**/{dist,.git}/**"],
         ignorePermissionErrors: true,
         ignoreInitial: true,
       })
       .on("all", async (event, filepath) => {
         if (!result) return
         filepath = slash(filepath)
+
+        const rebuildLog = () =>
+          console.log(
+            `Rebuilding due to ${event} on ${path.relative(
+              process.cwd(),
+              filepath,
+            )}`,
+          )
+
         if (htmlPath === filepath) {
+          rebuildLog()
           result.dispose()
           try {
             result = await startBuild()
@@ -320,9 +337,12 @@ const _build = async ({
             reload()
           }
         } else if (
-          result.deps.some((dep) => path.join(options.dir, dep) === filepath)
+          result.deps.some((dep) => path.join(options.dir, dep) === filepath) ||
+          result.watchFiles.has(filepath) ||
+          [...result.watchDirs].some((dir) => filepath.startsWith(dir))
         ) {
           try {
+            rebuildLog()
             result = await result.rebuild()
             handleBuildEnd()
           } catch (error) {
@@ -405,6 +425,7 @@ export const createServer = async (
 
   await _build({
     options,
+    config: config.data,
     buildEnd(result) {
       html = result.html
       reload()
@@ -441,9 +462,11 @@ export const createServer = async (
 
 export const build = async (_options: Options) => {
   const options = normalizeOptions(_options)
+  const config = await loadConfig(options.dir)
 
   await _build({
     options,
+    config: config.data,
     buildEnd({ html }) {
       outputFileSync(path.join(options.outDir, "index.html"), html)
     },

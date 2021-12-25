@@ -12,13 +12,10 @@ export const workerPlugin = (): Plugin => {
         if (isWorker || isSharedWorker) {
           const result = await build.esbuild.build({
             ...build.initialOptions,
-            metafile: true,
-            plugins: build.initialOptions.plugins!.filter(
-              (p) => p.name !== "progress",
-            ),
+            incremental: false,
+            plugins: [],
             entryPoints: [args.path],
             logLevel: "silent",
-            sourcemap: build.initialOptions.sourcemap,
           })
           if (result.errors.length > 0 || result.warnings.length > 0) {
             return {

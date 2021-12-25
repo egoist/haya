@@ -1,5 +1,6 @@
 import fs from "fs"
 import dotenv from "dotenv"
+import { Plugin as EsbuildPlugin } from "esbuild"
 import dotenvExpand from "dotenv-expand"
 import { bundleRequire, loadTsConfig } from "bundle-require"
 import { DeepRequired } from "ts-essentials"
@@ -72,6 +73,10 @@ export type UserConfig = {
   server?: {
     port?: number
   }
+  /**
+   * @internal not intended for public use
+   */
+  __esbuildPlugins?: EsbuildPlugin[]
 }
 
 export type ResolvedConfig = DeepRequired<UserConfig>
@@ -110,6 +115,7 @@ export const loadConfig = async (
         ...inlineConfig.server,
         port: inlineConfig.server?.port ?? userConfig.server?.port ?? 3000,
       },
+      __esbuildPlugins: [...(userConfig.__esbuildPlugins || [])],
     },
     path: configPath,
     dependencies,

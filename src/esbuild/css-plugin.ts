@@ -1,8 +1,9 @@
 import path from "upath"
 import fs from "fs"
-import esbuild, { Plugin } from "esbuild"
+import esbuild from "esbuild"
 import { localImport } from "../utils"
 import type { Result as PostcssConfigResult } from "postcss-load-config"
+import { Plugin } from "../plugin"
 
 const postcssConfigCache = new Map<string, any>()
 
@@ -24,7 +25,7 @@ const resolvePostcssConfig = async (
   }
 }
 
-export const cssPlugin = (extraCssFiles: Set<string>): Plugin => {
+export const cssPlugin = (): Plugin => {
   return {
     name: "css",
 
@@ -74,12 +75,9 @@ export const cssPlugin = (extraCssFiles: Set<string>): Plugin => {
 
         const result = await esbuild.build({
           ...build.initialOptions,
-          metafile: true,
           entryPoints: [args.path],
+          incremental: false,
           plugins: [
-            ...build.initialOptions.plugins!.filter(
-              (p) => p.name !== "progress" && p.name !== "css",
-            ),
             {
               name: "import-css",
               setup(build) {
@@ -113,7 +111,7 @@ export const cssPlugin = (extraCssFiles: Set<string>): Plugin => {
           path.relative(build.initialOptions.outdir!, filepath)
 
         if (args.suffix !== "?import-only") {
-          extraCssFiles.add(filepath)
+          build.collectCssFile(filepath)
         }
 
         return {
