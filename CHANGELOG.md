@@ -1,4 +1,4 @@
-## Unreleased
+## 0.0.9
 
 - Env variables are now available under both `process.env` and `import.meta.env`, there're also `import.meta.env.DEV`, `import.meta.env.PROD`, `import.meta.env.BASE_URL` and `import.meta.env.MODE`, improving Vite compatibility.
 - Add `.vue` support, you need to install `@vue/compiler-sfc` locally to make it work.
