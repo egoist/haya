@@ -13,7 +13,7 @@ specifiers:
   dotenv: ^10.0.0
   dotenv-expand: ^5.1.0
   esbuild: ^0.14.8
-  esbuild-plugin-vue: ^0.2.1
+  esbuild-plugin-vue: ^0.2.2
   h3: ^0.3.8
   hash-sum: ^2.0.0
   lodash: ^4.17.21
@@ -36,7 +36,7 @@ specifiers:
 dependencies:
   chokidar: 3.5.2
   esbuild: 0.14.8
-  esbuild-plugin-vue: 0.2.1_esbuild@0.14.8
+  esbuild-plugin-vue: 0.2.3_esbuild@0.14.8
   ws: 8.4.0
 
 devDependencies:
@@ -654,8 +654,8 @@ packages:
     requiresBuild: true
     optional: true
 
-  /esbuild-plugin-vue/0.2.1_esbuild@0.14.8:
-    resolution: {integrity: sha512-VeN2ZEzSvYQuRhV+zYkJ6tAI/xExYMjwjGs3Tzgk2l7YGKe5CxHGfyc7YxIZee3VSUZG778f/62vGqkLVLpX4w==}
+  /esbuild-plugin-vue/0.2.3_esbuild@0.14.8:
+    resolution: {integrity: sha512-OHPztH8KwPMN5IYX6CWUqWbSIpZHyKGdA2xu8744Ul18qrQr9Rm+LoMePROUOItSyw+iixhsScgl/bUNLP0CDw==}
     peerDependencies:
       esbuild: '>=0.11  <=1'
     dependencies:

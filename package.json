@@ -68,7 +68,7 @@
   "dependencies": {
     "chokidar": "^3.5.2",
     "esbuild": "^0.14.8",
-    "esbuild-plugin-vue": "^0.2.1",
+    "esbuild-plugin-vue": "^0.2.2",
     "ws": "^8.4.0"
   },
   "peerDependencies": {
