@@ -36,6 +36,7 @@ specifiers:
 dependencies:
   chokidar: 3.5.2
   esbuild: 0.14.8
+  esbuild-plugin-vue: 0.2.1_esbuild@0.14.8
   ws: 8.4.0
 
 devDependencies:
@@ -49,7 +50,6 @@ devDependencies:
   cac: 6.7.12
   dotenv: 10.0.0
   dotenv-expand: 5.1.0
-  esbuild-plugin-vue: 0.2.1_esbuild@0.14.8
   h3: 0.3.8
   hash-sum: 2.0.0
   lodash: 4.17.21
@@ -662,7 +662,7 @@ packages:
       esbuild: 0.14.8
       hash-sum: 2.0.0
       resolve-from: 5.0.0
-    dev: true
+    dev: false
 
   /esbuild-sunos-64/0.14.8:
     resolution: {integrity: sha512-xV41Wa8imziM/2dbWZjLKQbIETRgo5dE0oc/uPsgaecJhsrdA0VkGa/V432LJSUYv967xHDQdoRRl5tr80+NnQ==}
@@ -851,7 +851,6 @@ packages:
 
   /hash-sum/2.0.0:
     resolution: {integrity: sha512-WdZTbAByD+pHfl/g9QSsBIIwy8IT+EsPiKDs0KNX+zSHhdDLFKdZu0BQHljvO+0QI/BasbMSUa8wYNCZTvhslg==}
-    dev: true
 
   /htmlparser2/7.2.0:
     resolution: {integrity: sha512-H7MImA4MS6cw7nbyURtLPO1Tms7C5H602LRETv95z1MxO/7CP7rDVROehUYeYBUYEON94NXXDEPmZuq+hX4sog==}
@@ -1231,7 +1230,6 @@ packages:
   /resolve-from/5.0.0:
     resolution: {integrity: sha512-qYg9KP24dD5qka9J47d0aVky0N+b4fTU89LN9iDnjB5waksiC49rvMB0PrUJQGoTmH50XPiqOvAjDfaijGxYZw==}
     engines: {node: '>=8'}
-    dev: true
 
   /resolve/1.20.0:
     resolution: {integrity: sha512-wENBPt4ySzg4ybFQW2TT1zMQucPK95HSh/nq2CFTZVOGut2+pQvSsgtda4d26YrYcr067wjbmzOG8byDPBX63A==}

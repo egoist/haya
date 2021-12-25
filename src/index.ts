@@ -102,7 +102,6 @@ const _build = async ({
       .replace(/HAYA_REPLACE\[([^\]]+)\]/g, (_, entryName) => {
         return entryOutputMap[entryName]
       })
-
       .replace(
         "</head>",
         `${[...extraCssFiles]

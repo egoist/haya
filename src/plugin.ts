@@ -48,7 +48,10 @@ export const wrapEsbuildPlugins = (
     // @ts-expect-error
     async setup(build: PluginBuild) {
       build.collectCssFile = (absPath) =>
-        arraify(absPath).forEach((p) => state.extraCssFiles.add(p))
+        arraify(absPath).forEach((p) => {
+          if (!p.endsWith(".css")) return
+          state.extraCssFiles.add(p)
+        })
       build.addWatchFiles = (absPath) =>
         arraify(absPath).forEach((p) => state.watchFiles.add(p))
       build.addWatchDirs = (absPath) =>
