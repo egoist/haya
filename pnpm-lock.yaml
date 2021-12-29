@@ -6,7 +6,7 @@ specifiers:
   '@types/hash-sum': 1.0.0
   '@types/ws': 8.2.2
   '@vue/compiler-sfc': 3.2.26
-  autoprefixer: 10.4.0
+  autoprefixer: 10.4.1
   bundle-require: 2.2.0
   cac: 6.7.12
   chokidar: ^3.5.2
@@ -45,7 +45,7 @@ devDependencies:
   '@types/hash-sum': 1.0.0
   '@types/ws': 8.2.2
   '@vue/compiler-sfc': 3.2.26
-  autoprefixer: 10.4.0_postcss@8.4.5
+  autoprefixer: 10.4.1_postcss@8.4.5
   bundle-require: 2.2.0_esbuild@0.14.8
   cac: 6.7.12
   dotenv: 10.0.0
@@ -59,7 +59,7 @@ devDependencies:
   prettier: 2.5.1
   resolve-from: 5.0.0
   sirv: 1.0.19
-  tailwindcss: 3.0.8_16a290f6d0e3717bf6d2667234aebd30
+  tailwindcss: 3.0.8_cefe482e8d38053bbf3d5815e0c551b3
   time-span: 5.0.0
   ts-essentials: 9.1.0_typescript@4.5.4
   tsup: 5.11.9_typescript@4.5.4
@@ -288,15 +288,15 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /autoprefixer/10.4.0_postcss@8.4.5:
-    resolution: {integrity: sha512-7FdJ1ONtwzV1G43GDD0kpVMn/qbiNqyOPMFTX5nRffI+7vgWoFEc6DcXOxHJxrWNDXrZh18eDsZjvZGUljSRGA==}
+  /autoprefixer/10.4.1_postcss@8.4.5:
+    resolution: {integrity: sha512-B3ZEG7wtzXDRCEFsan7HmR2AeNsxdJB0+sEC0Hc5/c2NbhJqPwuZm+tn233GBVw82L+6CtD6IPSfVruwKjfV3A==}
     engines: {node: ^10 || ^12 || >=14}
     hasBin: true
     peerDependencies:
       postcss: ^8.1.0
     dependencies:
       browserslist: 4.19.1
-      caniuse-lite: 1.0.30001292
+      caniuse-lite: 1.0.30001294
       fraction.js: 4.1.2
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -330,7 +330,7 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001292
+      caniuse-lite: 1.0.30001294
       electron-to-chromium: 1.4.27
       escalade: 3.1.1
       node-releases: 2.0.1
@@ -360,8 +360,8 @@ packages:
     engines: {node: '>= 6'}
     dev: true
 
-  /caniuse-lite/1.0.30001292:
-    resolution: {integrity: sha512-jnT4Tq0Q4ma+6nncYQVe7d73kmDmE9C3OGTx3MvW7lBM/eY1S1DZTMBON7dqV481RhNiS5OxD7k9JQvmDOTirw==}
+  /caniuse-lite/1.0.30001294:
+    resolution: {integrity: sha512-LiMlrs1nSKZ8qkNhpUf5KD0Al1KCBE3zaT7OLOwEkagXMEDij98SiOovn9wxVGQpklk9vVC/pUSqgYmkmKOS8g==}
     dev: true
 
   /chalk/2.4.2:
@@ -1345,7 +1345,7 @@ packages:
       has-flag: 4.0.0
     dev: true
 
-  /tailwindcss/3.0.8_16a290f6d0e3717bf6d2667234aebd30:
+  /tailwindcss/3.0.8_cefe482e8d38053bbf3d5815e0c551b3:
     resolution: {integrity: sha512-Yww1eRYO1AxITJmW/KduZPxNvYdHuedeKwPju9Oakp7MdiixRi5xkpLhirsc81QCxHL0eoce6qKmxXwYGt4Cjw==}
     engines: {node: '>=12.13.0'}
     hasBin: true
@@ -1354,7 +1354,7 @@ packages:
       postcss: ^8.0.9
     dependencies:
       arg: 5.0.1
-      autoprefixer: 10.4.0_postcss@8.4.5
+      autoprefixer: 10.4.1_postcss@8.4.5
       chalk: 4.1.2
       chokidar: 3.5.2
       color-name: 1.1.4
