@@ -25,7 +25,7 @@ specifiers:
   sirv: 1.0.19
   tailwindcss: 3.0.8
   time-span: 5.0.0
-  ts-essentials: 9.1.0
+  ts-essentials: 9.1.2
   tsup: 5.11.10
   typescript: 4.5.4
   upath: 2.0.1
@@ -61,7 +61,7 @@ devDependencies:
   sirv: 1.0.19
   tailwindcss: 3.0.8_cefe482e8d38053bbf3d5815e0c551b3
   time-span: 5.0.0
-  ts-essentials: 9.1.0_typescript@4.5.4
+  ts-essentials: 9.1.2_typescript@4.5.4
   tsup: 5.11.10_typescript@4.5.4
   typescript: 4.5.4
   upath: 2.0.1
@@ -1423,8 +1423,8 @@ packages:
     hasBin: true
     dev: true
 
-  /ts-essentials/9.1.0_typescript@4.5.4:
-    resolution: {integrity: sha512-L0ggCct1zrW4qoVs3+sVZvT3upDdbPGJTsfIau9kiZxlyRFaMWDZxAI/VsM1HX9fCJWgoNoynxYm2GcxwQtDMg==}
+  /ts-essentials/9.1.2_typescript@4.5.4:
+    resolution: {integrity: sha512-EaSmXsAhEiirrTY1Oaa7TSpei9dzuCuFPmjKRJRPamERYtfaGS8/KpOSbjergLz/Y76/aZlV9i/krgzsuWEBbg==}
     peerDependencies:
       typescript: '>=4.1.0'
     dependencies:
