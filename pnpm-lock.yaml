@@ -22,7 +22,7 @@ specifiers:
   posthtml: 0.16.5
   prettier: 2.5.1
   resolve-from: 5.0.0
-  sirv: 1.0.19
+  sirv: 2.0.0
   tailwindcss: 3.0.8
   time-span: 5.0.0
   ts-essentials: 9.1.0
@@ -58,7 +58,7 @@ devDependencies:
   posthtml: 0.16.5
   prettier: 2.5.1
   resolve-from: 5.0.0
-  sirv: 1.0.19
+  sirv: 2.0.0
   tailwindcss: 3.0.8_cefe482e8d38053bbf3d5815e0c551b3
   time-span: 5.0.0
   ts-essentials: 9.1.0_typescript@4.5.4
@@ -1280,13 +1280,13 @@ packages:
     resolution: {integrity: sha512-sDl4qMFpijcGw22U5w63KmD3cZJfBuFlVNbVMKje2keoKML7X2UzWbc4XrmEbDwg0NXJc3yv4/ox7b+JWb57kQ==}
     dev: true
 
-  /sirv/1.0.19:
-    resolution: {integrity: sha512-JuLThK3TnZG1TAKDwNIqNq6QA2afLOCcm+iE8D1Kj3GA40pSPsxQjjJl0J8X3tsR7T+CP1GavpzLwYkgVLWrZQ==}
+  /sirv/2.0.0:
+    resolution: {integrity: sha512-TT+4+zSM9LR8soWT5/4gOYHfB5a5XEOSV2LtmBRN5MUxi8kh7BSRGuoRYjeBaqhR4w+yx+k6t0OibDNgoLfF7w==}
     engines: {node: '>= 10'}
     dependencies:
       '@polka/url': 1.0.0-next.21
       mrmime: 1.0.0
-      totalist: 1.1.0
+      totalist: 2.0.0
     dev: true
 
   /slash/3.0.0:
@@ -1413,8 +1413,8 @@ packages:
     dependencies:
       is-number: 7.0.0
 
-  /totalist/1.1.0:
-    resolution: {integrity: sha512-gduQwd1rOdDMGxFG1gEvhV88Oirdo2p+KjoYFU7k2g+i7n6AFFbDQ5kMPUsW0pNbfQsB/cwXvT1i4Bue0s9g5g==}
+  /totalist/2.0.0:
+    resolution: {integrity: sha512-+Y17F0YzxfACxTyjfhnJQEe7afPA0GSpYlFkl2VFMxYP7jshQf9gXV7cH47EfToBumFThfKBvfAcoUn6fdNeRQ==}
     engines: {node: '>=6'}
     dev: true
 
