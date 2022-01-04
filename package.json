@@ -51,7 +51,7 @@
     "hash-sum": "2.0.0",
     "lodash": "4.17.21",
     "postcss": "8.4.5",
-    "postcss-load-config": "3.1.0",
+    "postcss-load-config": "3.1.1",
     "posthtml": "0.16.5",
     "prettier": "2.5.1",
     "resolve-from": "5.0.0",
