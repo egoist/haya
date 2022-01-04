@@ -23,7 +23,7 @@ specifiers:
   prettier: 2.5.1
   resolve-from: 5.0.0
   sirv: 2.0.0
-  tailwindcss: 3.0.8
+  tailwindcss: 3.0.9
   time-span: 5.0.0
   ts-essentials: 9.1.2
   tsup: 5.11.10
@@ -59,7 +59,7 @@ devDependencies:
   prettier: 2.5.1
   resolve-from: 5.0.0
   sirv: 2.0.0
-  tailwindcss: 3.0.8_cefe482e8d38053bbf3d5815e0c551b3
+  tailwindcss: 3.0.9_cefe482e8d38053bbf3d5815e0c551b3
   time-span: 5.0.0
   ts-essentials: 9.1.2_typescript@4.5.4
   tsup: 5.11.10_typescript@4.5.4
@@ -1243,13 +1243,6 @@ packages:
     engines: {iojs: '>=1.0.0', node: '>=0.10.0'}
     dev: true
 
-  /rimraf/3.0.2:
-    resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
-    hasBin: true
-    dependencies:
-      glob: 7.1.6
-    dev: true
-
   /rollup/2.61.1:
     resolution: {integrity: sha512-BbTXlEvB8d+XFbK/7E5doIcRtxWPRiqr0eb5vQ0+2paMM04Ye4PZY5nHOQef2ix24l/L0SpLd5hwcH15QHPdvA==}
     engines: {node: '>=10.0.0'}
@@ -1345,8 +1338,8 @@ packages:
       has-flag: 4.0.0
     dev: true
 
-  /tailwindcss/3.0.8_cefe482e8d38053bbf3d5815e0c551b3:
-    resolution: {integrity: sha512-Yww1eRYO1AxITJmW/KduZPxNvYdHuedeKwPju9Oakp7MdiixRi5xkpLhirsc81QCxHL0eoce6qKmxXwYGt4Cjw==}
+  /tailwindcss/3.0.9_cefe482e8d38053bbf3d5815e0c551b3:
+    resolution: {integrity: sha512-X8TVifxDWfiNXInOeBofTteXAtZ5f0HnLs/uV4jDQNShc33Jb7qjYbk4VwI365rWAzcqYTks+9kesf3xH7Y35A==}
     engines: {node: '>=12.13.0'}
     hasBin: true
     peerDependencies:
@@ -1375,7 +1368,6 @@ packages:
       postcss-value-parser: 4.2.0
       quick-lru: 5.1.1
       resolve: 1.20.0
-      tmp: 0.2.1
     transitivePeerDependencies:
       - ts-node
     dev: true
@@ -1398,13 +1390,6 @@ packages:
     engines: {node: '>=12'}
     dependencies:
       convert-hrtime: 5.0.0
-    dev: true
-
-  /tmp/0.2.1:
-    resolution: {integrity: sha512-76SUhtfqR2Ijn+xllcI5P1oyannHNHByD80W1q447gU3mp9G9PSpGdWmjUOHRDPiHYacIk66W7ubDTuPF3BEtQ==}
-    engines: {node: '>=8.17.0'}
-    dependencies:
-      rimraf: 3.0.2
     dev: true
 
   /to-regex-range/5.0.1:
