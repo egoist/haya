@@ -23,7 +23,7 @@ specifiers:
   prettier: 2.5.1
   resolve-from: 5.0.0
   sirv: 2.0.0
-  tailwindcss: 3.0.9
+  tailwindcss: 3.0.11
   time-span: 5.0.0
   ts-essentials: 9.1.2
   tsup: 5.11.10
@@ -59,7 +59,7 @@ devDependencies:
   prettier: 2.5.1
   resolve-from: 5.0.0
   sirv: 2.0.0
-  tailwindcss: 3.0.9_cefe482e8d38053bbf3d5815e0c551b3
+  tailwindcss: 3.0.11_cefe482e8d38053bbf3d5815e0c551b3
   time-span: 5.0.0
   ts-essentials: 9.1.2_typescript@4.5.4
   tsup: 5.11.10_typescript@4.5.4
@@ -1112,9 +1112,11 @@ packages:
     engines: {node: '>= 6'}
     dev: true
 
-  /postcss-js/3.0.3:
-    resolution: {integrity: sha512-gWnoWQXKFw65Hk/mi2+WTQTHdPD5UJdDXZmX073EY/B3BWnYjO4F4t0VneTCnCGQ5E5GsCdMkzPaTXwl3r5dJw==}
-    engines: {node: '>=10.0'}
+  /postcss-js/4.0.0_postcss@8.4.5:
+    resolution: {integrity: sha512-77QESFBwgX4irogGVPgQ5s07vLvFqWr228qZY+w6lW599cRlK/HmnlivnnVUxkjHnCu4J16PDMHcH+e+2HbvTQ==}
+    engines: {node: ^12 || ^14 || >= 16}
+    peerDependencies:
+      postcss: ^8.3.3
     dependencies:
       camelcase-css: 2.0.1
       postcss: 8.4.5
@@ -1323,8 +1325,8 @@ packages:
       has-flag: 4.0.0
     dev: true
 
-  /tailwindcss/3.0.9_cefe482e8d38053bbf3d5815e0c551b3:
-    resolution: {integrity: sha512-X8TVifxDWfiNXInOeBofTteXAtZ5f0HnLs/uV4jDQNShc33Jb7qjYbk4VwI365rWAzcqYTks+9kesf3xH7Y35A==}
+  /tailwindcss/3.0.11_cefe482e8d38053bbf3d5815e0c551b3:
+    resolution: {integrity: sha512-JyMsQ2kPqpOvG8ow535XpauXj3wz3nQqcy2tVlXj4FQ0eNlsdzvlAqpRA3q5rPLboWirNG6r2DqKczwjW2uc8Q==}
     engines: {node: '>=12.13.0'}
     hasBin: true
     peerDependencies:
@@ -1346,7 +1348,7 @@ packages:
       normalize-path: 3.0.0
       object-hash: 2.2.0
       postcss: 8.4.5
-      postcss-js: 3.0.3
+      postcss-js: 4.0.0_postcss@8.4.5
       postcss-load-config: 3.1.1
       postcss-nested: 5.0.6_postcss@8.4.5
       postcss-selector-parser: 6.0.8
