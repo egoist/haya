@@ -46,7 +46,7 @@
     "bundle-require": "2.2.0",
     "cac": "6.7.12",
     "dotenv": "10.0.0",
-    "dotenv-expand": "5.1.0",
+    "dotenv-expand": "6.0.1",
     "h3": "0.3.8",
     "hash-sum": "2.0.0",
     "lodash": "4.17.21",
