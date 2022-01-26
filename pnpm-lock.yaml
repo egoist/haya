@@ -7,7 +7,7 @@ specifiers:
   '@types/ws': 8.2.2
   '@vue/compiler-sfc': 3.2.26
   autoprefixer: 10.4.1
-  bundle-require: 2.2.0
+  bundle-require: 2.3.0
   cac: 6.7.12
   chokidar: ^3.5.2
   dotenv: 10.0.0
@@ -46,7 +46,7 @@ devDependencies:
   '@types/ws': 8.2.2
   '@vue/compiler-sfc': 3.2.26
   autoprefixer: 10.4.1_postcss@8.4.5
-  bundle-require: 2.2.0_esbuild@0.14.8
+  bundle-require: 2.3.0_esbuild@0.14.8
   cac: 6.7.12
   dotenv: 10.0.0
   dotenv-expand: 5.1.0
@@ -337,8 +337,8 @@ packages:
       picocolors: 1.0.0
     dev: true
 
-  /bundle-require/2.2.0_esbuild@0.14.8:
-    resolution: {integrity: sha512-JDVxYEAxEX1g8AWtadiIkCkFf42RulEl5AOIvUa4cpuEL/VKpK2lJwogyswHnp+qizNQxM0Ylamw7CjPRaJZuA==}
+  /bundle-require/2.3.0_esbuild@0.14.8:
+    resolution: {integrity: sha512-kH8vyERJv0Td4Odu2KQyooYyeXDx2FbhGwSfkEGdyHmkTCahvwVI8w/pE2stbsp6G/W5/3kIC7ErdBg/30OAkw==}
     peerDependencies:
       esbuild: '>=0.13'
     dependencies:
@@ -1416,7 +1416,7 @@ packages:
       typescript:
         optional: true
     dependencies:
-      bundle-require: 2.2.0_esbuild@0.14.8
+      bundle-require: 2.3.0_esbuild@0.14.8
       cac: 6.7.12
       chokidar: 3.5.2
       debug: 4.3.3
